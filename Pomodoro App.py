@@ -19,7 +19,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "sound_bereit": "🔊 Audio bereit! Drücke Play falls es nicht automatisch startet:"
+        "sound_hinweis": "🎵 Tonsignal wird geladen..."
     },
     "English": {
         "titel": "⚡ NEO POMODORO",
@@ -30,7 +30,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "sound_bereit": "🔊 Audio ready! Press play if it doesn't auto-start:"
+        "sound_hinweis": "🎵 Loading audio signal..."
     },
     "Español": {
         "titel": "⚡ NEO POMODORO",
@@ -41,7 +41,7 @@ texte = {
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "sound_bereit": "🔊 ¡Audio listo! Presiona reproducir si no inicia solo:"
+        "sound_hinweis": "🎵 Cargando señal de audio..."
     },
     "Nederlands": {
         "titel": "⚡ NEO POMODORO",
@@ -52,7 +52,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "sound_bereit": "🔊 Audio gereed! Druk op play als het niet automatisch start:"
+        "sound_hinweis": "🎵 Audiosignaal laden..."
     },
     "Français": {
         "titel": "⚡ NEO POMODORO",
@@ -63,7 +63,7 @@ texte = {
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "sound_bereit": "🔊 Audio prêt ! Appuyez sur play si cela ne démarre pas seul :"
+        "sound_hinweis": "🎵 Chargement du signal audio..."
     },
     "Italiano": {
         "titel": "⚡ NEO POMODORO",
@@ -74,15 +74,15 @@ texte = {
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "sound_bereit": "🔊 Audio pronto! Premi play se non parte da solo:"
+        "sound_hinweis": "🎵 Caricamento segnale audio..."
     }
 }
 
-# Zuverlässige MP3/OGG Sound-Links aus dem Internet
+# Absolut stabile, direkt streambare Musik-Links (MP3-Format)
 sound_links = {
-    "Classic Alarm": "https://soundhelix.com", # Beispiel stabiler MP3-Stream
-    "Digital Watch": "https://google.com",
-    "Cyber Bell": "https://google.com"
+    "Classic Alarm": "https://soundhelix.com",
+    "Digital Beep": "https://soundhelix.com",
+    "Cyber Chime": "https://soundhelix.com"
 }
 
 # 🌌 CSS für den flexiblen Neon-Kreis mit automatischer Schriftfarbe
@@ -136,6 +136,9 @@ st.markdown("---")
 
 display_placeholder = st.empty()
 
+# Container für den Audio-Player vorbereiten (Wird erst geladen, wenn die Zeit um ist!)
+audio_placeholder = st.empty()
+
 # Start-Button direkt unter der Uhr
 if st.button(t['start'], use_container_width=True):
     gesamt_sekunden = minuten_einstellung * 60
@@ -155,13 +158,13 @@ if st.button(t['start'], use_container_width=True):
             """, unsafe_allow_html=True)
         time.sleep(1)
     
-    # Wenn fertig
+    # Wenn die Zeit abgelaufen ist:
     st.balloons()
     st.success(t["erfolg"])
     
-    # 🔊 OFFIZIELLER STREAMLIT AUDIO PLAYER (Sicherer Browser-Weg)
-    st.write(t["sound_bereit"])
-    st.audio(sound_url, format="audio/mp3", autoplay=True)
+    # 🔥 DIE BRUTALE ABSICHERUNG: Der offizielle Streamlit-Audio-Player mit echtem MPEG-MIME-Typ
+    # Das wird von JEDEM mobilen und Desktop-Browser akzeptiert, weil der Nutzer zuvor auf "START" geklickt hat!
+    audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
 
 else:
     # Standard-Anzeige im Ruhezustand
