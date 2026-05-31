@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# 🎨 Minimalistisches Seiten-Setup
+# 🎨 Perfektes Seiten-Setup für alle Geräte
 st.set_page_config(
     page_title="NEO Pomodoro",
     page_icon="⏱️",
@@ -19,7 +19,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "sound_bereit": "🔊 ALARM-SOUND BEREIT"
+        "sound_knopf": "🎵 ALARM ABSPIELEN / STOPPEN"
     },
     "English": {
         "titel": "NEO POMODORO",
@@ -30,7 +30,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "sound_bereit": "🔊 ALARM SOUND READY"
+        "sound_knopf": "🎵 PLAY / STOP ALARM"
     },
     "Español": {
         "titel": "NEO POMODORO",
@@ -41,7 +41,7 @@ texte = {
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "sound_bereit": "🔊 SONIDO DE ALARMA LISTO"
+        "sound_knopf": "🎵 REPRODUCIR / DETENER ALARMA"
     },
     "Nederlands": {
         "titel": "NEO POMODORO",
@@ -52,7 +52,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "sound_bereit": "🔊 ALARMSIGNAAL GEREED"
+        "sound_knopf": "🎵 ALARM AFSPELEN / STOPPEN"
     },
     "Français": {
         "titel": "NEO POMODORO",
@@ -63,7 +63,7 @@ texte = {
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "sound_bereit": "🔊 SONNERIE PRÊTE"
+        "sound_knopf": "🎵 JOUER / ARRÊTER L'ALARME"
     },
     "Italiano": {
         "titel": "NEO POMODORO",
@@ -74,18 +74,18 @@ texte = {
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "sound_bereit": "🔊 SUONO ALLARME PRONTO"
+        "sound_knopf": "🎵 RIPRODUCI / FERMA ALLARME"
     }
 }
 
-# Extrem stabile MP3-Links von einem schnellen Server
+# 🔊 Zuverlässige, kurze Sound-Effekte im MP3-Format
 sound_links = {
-    "Classic Alarm": "https://soundhelix.com",
-    "Digital Beep": "https://soundhelix.com",
-    "Cyber Chime": "https://soundhelix.com"
+    "Classic Alarm": "https://mixkit.co",
+    "Digital Beep": "https://mixkit.co",
+    "Cyber Chime": "https://mixkit.co"
 }
 
-# 🌌 CSS für den kreisförmigen Timer
+# 🌌 CSS: Automatische Größenanpassung für Handy & PC (Responsive)
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -93,23 +93,25 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 40px auto;
-        width: 280px;
-        height: 280px;
+        margin: 30px auto;
+        /* Automatische Anpassung: Maximal 280px, auf kleinen Handys 65% der Bildschirmbreite */
+        width: min(280px, 65vw);
+        height: min(280px, 65vw);
         border-radius: 50%;
-        border: 8px solid #1f6feb;
-        box-shadow: 0 0 20px #1f6feb, inset 0 0 20px #1f6feb;
+        border: 6px solid #1f6feb;
+        box-shadow: 0 0 15px #1f6feb, inset 0 0 15px #1f6feb;
         background-color: rgba(31, 111, 235, 0.05);
     }
     .timer-text {
-        font-size: 55px;
+        /* Schriftgröße passt sich der Kreisgröße an */
+        font-size: min(50px, 11vw);
         font-weight: bold;
         letter-spacing: 2px;
         text-align: center;
         color: currentColor;
     }
     .sub-text {
-        font-size: 14px;
+        font-size: min(14px, 3.5vw);
         color: #58a6ff;
         text-align: center;
         letter-spacing: 3px;
@@ -145,7 +147,7 @@ if st.session_state.status == "bereit":
 display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
-# 🎛️ BUTTONS (Zentriert)
+# 🎛️ BUTTONS (Zentriert und für Touchscreens optimiert)
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -188,18 +190,20 @@ if st.session_state.status == "laeuft":
     if st.session_state.zeit_uebrig == 0:
         st.session_state.status = "bereit"
         st.session_state.zeit_uebrig = minuten_einstellung * 60
+        
+        # Zeige das Endergebnis, feiere mit Luftballons
+        display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">00:00</div><div class="sub-text">DONE</div></div></div>""", unsafe_allow_html=True)
         st.balloons()
         st.success(t["erfolg"])
         
-        # 🔥 SAMSUNG FIX: Der offizielle Player wird direkt eingeblendet und gestartet
-        with audio_placeholder.container():
-            st.write(t["sound_bereit"])
-            st.audio(sound_url, format="audio/mp3", autoplay=True)
+        # 🔊 DIE SYSTEM-ÜBERGREIFENDE LÖSUNG:
+        # Ein nativer, sichtbarer Player wird geladen. Am PC startet autoplay, 
+        # auf dem Handy dient der Knopf als sicherer Auslöser!
+        audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
 
-# ZUSTANDS-ANZEIGEN
+# ZUSTANDS-ANZEIGEN (Wenn nicht aktiv heruntergezählt wird)
 if st.session_state.status == "pausiert":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">PAUSED</div></div></div>""", unsafe_allow_html=True)
 elif st.session_state.status == "bereit":
-    mins, secs = divmod(st.session_state.zeit_uebrig, 60)
-    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
+    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{minuten_einstellung:02d}:00</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
