@@ -1,84 +1,169 @@
 import streamlit as st
 import time
 
+# 🎨 Futuristisches Seiten-Setup
+st.set_page_config(
+    page_title="NEO Pomodoro",
+    page_icon="⚡",
+    layout="centered"
+)
+
 # 🌍 Wörterbuch mit allen Übersetzungen
 texte = {
     "Deutsch": {
-        "titel": "⏱️ Mein Handy-Lerntimer",
-        "untertitel": "Fokussiere dich auf deine Aufgaben!",
-        "frage": "Wie lange möchtest du lernen?",
-        "button": "Timer starten 🚀",
-        "info": "Der Timer läuft für {} Minuten. Bleib fokussiert!",
-        "erfolg": "🎉 Zeit vorbei! Mach eine wohlverdienst Pause."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "FUTURISTISCHES FOKUS-SYSTEM",
+        "start": "START",
+        "reset": "RESET",
+        "erfolg": "🚀 FOKUS-PHASE BEENDET!",
+        "einst_titel": "⚙️ SYSTEM-STEUERUNG",
+        "einst_sound": "🔔 AUDIO-SIGNAL",
+        "einst_zeit": "⏱️ DAWER (MINUTEN)"
     },
     "English": {
-        "titel": "⏱️ My Study Timer",
-        "untertitel": "Focus on your tasks!",
-        "frage": "How long do you want to study?",
-        "button": "Start Timer 🚀",
-        "info": "The timer is running for {} minutes. Stay focused!",
-        "erfolg": "🎉 Time's up! Take a well-deserved break."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "FUTURISTIC FOCUS SYSTEM",
+        "start": "START",
+        "reset": "RESET",
+        "erfolg": "🚀 FOCUS PHASE COMPLETE!",
+        "einst_titel": "⚙️ SYSTEM CONTROL",
+        "einst_sound": "🔔 AUDIO SIGNAL",
+        "einst_zeit": "⏱️ DURATION (MINUTES)"
     },
     "Español": {
-        "titel": "⏱️ Mi Temporizador de Estudio",
-        "untertitel": "¡Concéntrate en tus tareas!",
-        "frage": "¿Cuánto tiempo quieres estudiar?",
-        "button": "Iniciar Temporizador 🚀",
-        "info": "El temporizador está corriendo por {} minutos. ¡Mantente concentrado!",
-        "erfolg": "🎉 ¡Tiempo agotado! Tómate un merecido descanso."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "SISTEMA DE ENFOQUE FUTURISTA",
+        "start": "INICIAR",
+        "reset": "REINICIAR",
+        "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
+        "einst_titel": "⚙️ CONTROL DEL SISTEMA",
+        "einst_sound": "🔔 SEÑAL DE AUDIO",
+        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)"
     },
     "Nederlands": {
-        "titel": "⏱️ Mijn Studietimer",
-        "untertitel": "Concentreer je op je taken!",
-        "frage": "Hoe lang wil je studeren?",
-        "button": "Start Timer 🚀",
-        "info": "De timer loopt voor {} minuten. Blijf gefocust!",
-        "erfolg": "🎉 Tijd is om! Neem een welverdiende pauze."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "FUTURISTISCH FOCUS SYSTEEM",
+        "start": "START",
+        "reset": "RESET",
+        "erfolg": "🚀 FOCUSFASE VOLTOOID!",
+        "einst_titel": "⚙️ SYSTEEMCONTROLE",
+        "einst_sound": "🔔 AUDIOSIGNAAL",
+        "einst_zeit": "⏱️ DUUR (MINUTEN)"
     },
     "Français": {
-        "titel": "⏱️ Mon Minuteur d'Étude",
-        "untertitel": "Restez concentré sur vos tâches !",
-        "frage": "Combien de temps voulez-vous étudier ?",
-        "button": "Démarrer le Minuteur 🚀",
-        "info": "Le minuteur tourne pendant {} minutes. Restez concentré !",
-        "erfolg": "🎉 Le temps est écoulé ! Prenez une pause bien méritée."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "SYSTÈME DE CONCENTRATION FUTURISTE",
+        "start": "DÉMARRER",
+        "reset": "RÉINITIALISER",
+        "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
+        "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
+        "einst_sound": "🔔 SIGNAL AUDIO",
+        "einst_zeit": "⏱️ DURÉE (MINUTES)"
     },
     "Italiano": {
-        "titel": "⏱️ Il mio Timer di Studio",
-        "untertitel": "Concentrati sui tuoi compiti!",
-        "frage": "Quanto tempo vuoi studiare?",
-        "button": "Avvia Timer 🚀",
-        "info": "Il timer è attivo per {} minuti. Rimani concentrato!",
-        "erfolg": "🎉 Tempo scaduto! Fai una meritata pausa."
+        "titel": "⚡ NEO POMODORO",
+        "untertitel": "SISTEMA DI CONCENTRAZIONE FUTURISTICO",
+        "start": "AVVIA",
+        "reset": "RESET",
+        "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
+        "einst_titel": "⚙️ CONTROLLO SISTEMA",
+        "einst_sound": "🔔 SEGNALE AUDIO",
+        "einst_zeit": "⏱️ DURATA (MINUTI)"
     }
 }
 
-# 1. Sprachauswahl auf der Webseite anzeigen
-sprache = st.selectbox("🌐 Language / Sprache / Idioma",
-                       ["Deutsch", "English", "Español", "Nederlands", "Français", "Italiano"])
+sound_links = {
+    "Digital Watch": "https://google.com",
+    "Cyber Bell": "https://google.com",
+    "Energy Horn": "https://google.com"
+}
 
-# Aktuelle Texte basierend auf der Auswahl laden
+# 🌌 CSS für das futuristische Neon-Design
+st.markdown("""
+    <style>
+    .main { background-color: #0d1117; }
+    .stApp { color: #ffffff; font-family: 'Courier New', monospace; }
+    .timer-box {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 40px auto;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        border: 8px solid #1f6feb;
+        box-shadow: 0 0 20px #1f6feb, inset 0 0 20px #1f6feb;
+        background-color: #161b22;
+    }
+    .timer-text {
+        font-size: 55px;
+        font-weight: bold;
+        color: #ffffff;
+        letter-spacing: 2px;
+        text-align: center;
+    }
+    .sub-text {
+        font-size: 14px;
+        color: #58a6ff;
+        text-align: center;
+        letter-spacing: 3px;
+        margin-top: -5px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# ⚙️ SIDEBAR (Einstellungen)
+st.sidebar.title("⚙️ CONFIG")
+sprache = st.sidebar.selectbox("🌐 LANGUAGE", ["Deutsch", "English", "Español", "Nederlands", "Français", "Italiano"])
 t = texte[sprache]
 
-# 2. Webseite mit den gewählten Texten aufbauen
+st.sidebar.markdown("---")
+st.sidebar.subheader(t["einst_titel"])
+minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25)
+ausgewaehlter_sound = st.sidebar.selectbox(t["einst_sound"], list(sound_links.keys()))
+sound_url = sound_links[ausgewaehlter_sound]
+
+# 📱 HAUPTBILDSCHIRM
 st.title(t["titel"])
-st.write(t["untertitel"])
+st.caption(t["untertitel"])
+st.markdown("---")
 
-# Zeitauswahl
-minuten = st.selectbox(t["frage"], [5, 10, 15, 25, 45, 60])
+display_placeholder = st.empty()
 
-# Start-Button
-if st.button(t["button"]):
-    st.info(t["info"].format(minuten))
-
-    # Fortschrittsbalken
-    fortschritt = st.progress(0)
-    gesamt_sekunden = minuten * 60
-
-    for sekunde in range(gesamt_sekunden):
+# Start-Button direkt unter der Uhr
+if st.button(f"▶ {t['start']}", use_container_width=True):
+    gesamt_sekunden = minuten_einstellung * 60
+    
+    # Der echte Live-Countdown
+    for verbleibend in range(gesamt_sekunden, -1, -1):
+        mins, secs = divmod(verbleibend, 60)
+        zeit_format = f"{mins:02d}:{secs:02d}"
+        
+        display_placeholder.markdown(f"""
+            <div class="timer-box">
+                <div>
+                    <div class="timer-text">{zeit_format}</div>
+                    <div class="sub-text">FOCUS</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
         time.sleep(1)
-        prozent = int((sekunde + 1) / gesamt_sekunden * 100)
-        fortschritt.progress(prozent)
-
-    st.balloons()  # Feier-Effekt
+    
+    # Wenn fertig
+    st.balloons()
     st.success(t["erfolg"])
+    
+    # Sound abspielen
+    st.markdown(f'<iframe src="{sound_url}" allow="autoplay" style="display:none;"></iframe>', unsafe_allow_html=True)
+
+else:
+    # Standard-Anzeige im Ruhezustand
+    zeit_format = f"{minuten_einstellung:02d}:00"
+    display_placeholder.markdown(f"""
+        <div class="timer-box">
+            <div>
+                <div class="timer-text">{zeit_format}</div>
+                <div class="sub-text">READY</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
