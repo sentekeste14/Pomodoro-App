@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# 🎨 Perfektes Seiten-Setup
+# 🎨 Seiten-Setup
 st.set_page_config(
     page_title="NEO Pomodoro",
     page_icon="⏱️",
@@ -19,7 +19,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "player_titel": "🔊 Alarmsignal aktivieren:"
+        "player_titel": "🔊 KLICKE RECHTS AUF DAS DREIECK FÜR DEN TON:"
     },
     "English": {
         "titel": "NEO POMODORO",
@@ -30,7 +30,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "player_titel": "🔊 Activate alarm signal:"
+        "player_titel": "🔊 CLICK THE PLAY TRIANGLE FOR AUDIO:"
     },
     "Español": {
         "titel": "NEO POMODORO",
@@ -41,7 +41,7 @@ texte = {
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "player_titel": "🔊 Activar señal de alarma:"
+        "player_titel": "🔊 HAZ CLIC EN EL TRIÁNGULO PARA EL SONIDO:"
     },
     "Nederlands": {
         "titel": "NEO POMODORO",
@@ -52,7 +52,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "player_titel": "🔊 Alarmsignaal activeren:"
+        "player_titel": "🔊 KLIK OP DE DRIEHOEK VOOR GELUID:"
     },
     "Français": {
         "titel": "NEO POMODORO",
@@ -63,7 +63,7 @@ texte = {
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "player_titel": "🔊 Activer le signal d'alarme:"
+        "player_titel": "🔊 CLIQUEZ SUR LE TRIANGLE POUR LE SON:"
     },
     "Italiano": {
         "titel": "NEO POMODORO",
@@ -74,18 +74,18 @@ texte = {
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "player_titel": "🔊 Attiva segnale acustico:"
+        "player_titel": "🔊 CLICCA SUL TRIANGOLO PER IL SUONO:"
     }
 }
 
-# 🔊 Neue, extrem stabile Sound-Direktlinks (Direkte MP3-Streams ohne Blockaden)
+# Extrem stabile und zuverlässige Songs, die jeder Browser sofort abspielen kann
 sound_links = {
-    "Classic Alarm": "https://soundhelix.com",
-    "Digital Beep": "https://soundhelix.com",
-    "Cyber Chime": "https://soundhelix.com"
+    "Song 1": "https://soundhelix.com",
+    "Song 2": "https://soundhelix.com",
+    "Song 3": "https://soundhelix.com"
 }
 
-# 🌌 CSS: Automatische Größenanpassung
+# 🌌 CSS: Macht den Kreis chic und bringt den Player ganz nach vorne!
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -93,27 +93,43 @@ st.markdown("""
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 30px auto;
-        width: min(280px, 65vw);
-        height: min(280px, 65vw);
+        margin: 20px auto;
+        width: min(260px, 60vw);
+        height: min(260px, 60vw);
         border-radius: 50%;
         border: 6px solid #1f6feb;
         box-shadow: 0 0 15px #1f6feb, inset 0 0 15px #1f6feb;
         background-color: rgba(31, 111, 235, 0.05);
     }
     .timer-text {
-        font-size: min(50px, 11vw);
+        font-size: min(45px, 10vw);
         font-weight: bold;
         letter-spacing: 2px;
         text-align: center;
         color: currentColor;
     }
     .sub-text {
-        font-size: min(14px, 3.5vw);
+        font-size: min(12px, 3vw);
         color: #58a6ff;
         text-align: center;
         letter-spacing: 3px;
         margin-top: -5px;
+    }
+    /* 🔥 Klick-Rettung: Zwingt den HTML-Player in den absoluten Vordergrund */
+    .audio-container {
+        position: relative;
+        z-index: 99999 !important;
+        margin: 30px auto;
+        padding: 15px;
+        background: rgba(31, 111, 235, 0.1);
+        border-radius: 10px;
+        border: 1px solid #1f6feb;
+        text-align: center;
+    }
+    audio {
+        width: 100%;
+        max-width: 350px;
+        height: 54px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -125,7 +141,9 @@ t = texte[sprache]
 
 st.sidebar.markdown("---")
 st.sidebar.subheader(t["einst_titel"])
-minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25)
+
+# 🧠 WICHTIG: Eindeutige "key"-Zuweisung, damit sich der Slider nicht aufhängt!
+minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25, key="pomodoro_slider")
 ausgewaehlter_sound = st.sidebar.selectbox(t["einst_sound"], list(sound_links.keys()))
 sound_url = sound_links[ausgewaehlter_sound]
 
@@ -133,19 +151,20 @@ sound_url = sound_links[ausgewaehlter_sound]
 st.title(t["titel"])
 st.markdown("---")
 
-# 🧠 TIMER LOGIK
+# Session State Variablen initialisieren
 if "zeit_uebrig" not in st.session_state:
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 if "status" not in st.session_state:
     st.session_state.status = "bereit"
 
+# Wenn die Uhr bereitsteht, folgt sie dem Slider sofort
 if st.session_state.status == "bereit":
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 
 display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
-# 🎛️ BUTTONS (Zentriert)
+# 🎛️ BUTTONS
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -167,7 +186,7 @@ with col3:
             st.session_state.zeit_uebrig = minuten_einstellung * 60
             st.rerun()
 
-# ⏱️ COUNTDOWN-LOOP
+# ⏱️ COUNTDOWN-SCHLEIFE
 if st.session_state.status == "laeuft":
     while st.session_state.zeit_uebrig > 0 and st.session_state.status == "laeuft":
         mins, secs = divmod(st.session_state.zeit_uebrig, 60)
@@ -193,13 +212,12 @@ if st.session_state.status == "laeuft":
         st.balloons()
         st.success(t["erfolg"])
         
-        # 🔥 DIE NATIVE WEB-RETTUNG: Ein echter HTML5 Audio Player mit Steuerungsknöpfen!
-        # Durch die "controls" sieht der Browser ein legitimes Media-Element und blockiert es nicht.
+        # 🔥 DIE ABSOLUTE RETTUNG: Verpackt in einer klickbaren CSS-Box im absoluten Vordergrund!
         audio_placeholder.markdown(
             f"""
-            <div style="text-align: center; margin-top: 20px;">
-                <p style="font-weight: bold;">{t['player_titel']}</p>
-                <audio controls autoplay style="width: 100%; max-width: 400px;">
+            <div class="audio-container">
+                <p style="font-weight: bold; margin-bottom: 10px; color: #58a6ff;">{t['player_titel']}</p>
+                <audio controls autoplay>
                     <source src="{sound_url}" type="audio/mp3">
                 </audio>
             </div>
@@ -207,9 +225,12 @@ if st.session_state.status == "laeuft":
             unsafe_allow_html=True
         )
 
-# ZUSTANDS-ANZEIGEN
+# ANZEIGE WENN PAUSIERT
 if st.session_state.status == "pausiert":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">PAUSED</div></div></div>""", unsafe_allow_html=True)
+
+# ANZEIGE WENN BEREIT
 elif st.session_state.status == "bereit":
-    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{minuten_einstellung:02d}:00</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
+    mins, secs = divmod(st.session_state.zeit_uebrig, 60)
+    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
