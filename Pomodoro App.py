@@ -105,7 +105,9 @@ st.markdown("""
     .sub-text {
         font-size: 14px;
         color: #58a6ff;
-        text-align: center;
+        # Start-Button direkt unter der Uhr
+if st.button(f"▶ {t['start']}", use_container_width=True):
+
         letter-spacing: 3px;
         margin-top: -5px;
     }
