@@ -8,11 +8,12 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🌍 Wörterbuch mit allen Übersetzungen (ohne Emojis/Untertitel)
+# 🌍 Wörterbuch mit allen Übersetzungen
 texte = {
     "Deutsch": {
         "titel": "NEO POMODORO",
         "start": "START",
+        "pause": "PAUSE",
         "reset": "RESET",
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
@@ -22,6 +23,7 @@ texte = {
     "English": {
         "titel": "NEO POMODORO",
         "start": "START",
+        "pause": "PAUSE",
         "reset": "RESET",
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
@@ -31,6 +33,7 @@ texte = {
     "Español": {
         "titel": "NEO POMODORO",
         "start": "INICIAR",
+        "pause": "PAUSA",
         "reset": "REINICIAR",
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
@@ -40,6 +43,7 @@ texte = {
     "Nederlands": {
         "titel": "NEO POMODORO",
         "start": "START",
+        "pause": "PAUZE",
         "reset": "RESET",
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
@@ -49,6 +53,7 @@ texte = {
     "Français": {
         "titel": "NEO POMODORO",
         "start": "DÉMARRER",
+        "pause": "PAUSE",
         "reset": "RÉINITIALISER",
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
@@ -58,6 +63,7 @@ texte = {
     "Italiano": {
         "titel": "NEO POMODORO",
         "start": "AVVIA",
+        "pause": "PAUSA",
         "reset": "RESET",
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
@@ -73,7 +79,7 @@ sound_links = {
     "Cyber Chime": "https://soundhelix.com"
 }
 
-# 🌌 CSS für den kreisförmigen Timer (Farben passen sich an)
+# 🌌 CSS für den kreisförmigen Timer
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -117,20 +123,52 @@ minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=
 ausgewaehlter_sound = st.sidebar.selectbox(t["einst_sound"], list(sound_links.keys()))
 sound_url = sound_links[ausgewaehlter_sound]
 
-# 📱 HAUPTBILDSCHIRM (Jetzt ohne Untertitel und ohne Blitz-Emoji)
+# 📱 HAUPTBILDSCHIRM
 st.title(t["titel"])
 st.markdown("---")
+
+# 🧠 TIMER LOGIK (Session State Variablen anlegen)
+if "zeit_uebrig" not in st.session_state:
+    st.session_state.zeit_uebrig = minuten_einstellung * 60
+if "status" not in st.session_state:
+    st.session_state.status = "bereit"  # Mögliche Zustände: bereit, laeuft, pausiert
+
+# Falls der Schieberegler geändert wird, während die Uhr bereit steht, Zeit anpassen
+if st.session_state.status == "bereit":
+    st.session_state.zeit_uebrig = minuten_einstellung * 60
 
 display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
-# Start-Button direkt unter der Uhr
-if st.button(t['start'], use_container_width=True):
-    gesamt_sekunden = minuten_einstellung * 60
-    
-    # Der Live-Countdown
-    for verbleibend in range(gesamt_sekunden, -1, -1):
-        mins, secs = divmod(verbleibend, 60)
+# 🎛️ BUTTONS ERSTELLEN (Zentriert nebeneinander)
+col1, col2, col3 = st.columns([1, 1, 1])
+
+with col1:
+    # Start oder Weiter-Button
+    if st.session_state.status in ["bereit", "pausiert"]:
+        if st.button(t['start'], use_container_width=True):
+            st.session_state.status = "laeuft"
+            st.rerun()
+
+with col2:
+    # Pause-Button
+    if st.session_state.status == "laeuft":
+        if st.button(t['pause'], use_container_width=True):
+            st.session_state.status = "pausiert"
+            st.rerun()
+
+with col3:
+    # Reset-Button (Immer sichtbar außer im Ruhezustand)
+    if st.session_state.status != "bereit":
+        if st.button(t['reset'], use_container_width=True):
+            st.session_state.status = "bereit"
+            st.session_state.zeit_uebrig = minuten_einstellung * 60
+            st.rerun()
+
+# ⏱️ COUNTDOWN-LOOP
+if st.session_state.status == "laeuft":
+    while st.session_state.zeit_uebrig > 0 and st.session_state.status == "laeuft":
+        mins, secs = divmod(st.session_state.zeit_uebrig, 60)
         zeit_format = f"{mins:02d}:{secs:02d}"
         
         display_placeholder.markdown(f"""
@@ -141,18 +179,46 @@ if st.button(t['start'], use_container_width=True):
                 </div>
             </div>
             """, unsafe_allow_html=True)
+            
         time.sleep(1)
-    
-    # Wenn die Zeit abgelaufen ist:
-    st.balloons()
-    st.success(t["erfolg"])
-    
-    # Sound abspielen
-    audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
+        st.session_state.zeit_uebrig -= 1
+        
+        # Ein kurzer Check, ob der Benutzer in der Zwischenzeit auf Pause geklickt hat
+        # (Streamlit bricht die Schleife bei Button-Klicks automatisch ab und startet das Skript neu)
 
+    # Wenn die Zeit wirklich komplett abgelaufen ist
+    if st.session_state.zeit_uebrig == 0:
+        st.session_state.status = "bereit"
+        st.session_state.zeit_uebrig = minuten_einstellung * 60
+        display_placeholder.markdown(f"""
+            <div class="timer-box">
+                <div>
+                    <div class="timer-text">00:00</div>
+                    <div class="sub-text">DONE</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        st.balloons()
+        st.success(t["erfolg"])
+        audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
+
+# Anzeige wenn PAUSIERT
+elif st.session_state.status == "pausiert":
+    mins, secs = divmod(st.session_state.zeit_uebrig, 60)
+    zeit_format = f"{mins:02d}:{secs:02d}"
+    display_placeholder.markdown(f"""
+        <div class="timer-box">
+            <div>
+                <div class="timer-text">{zeit_format}</div>
+                <div class="sub-text">PAUSED</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# Anzeige wenn BEREIT
 else:
-    # Standard-Anzeige im Ruhezustand
-    zeit_format = f"{minuten_einstellung:02d}:00"
+    mins, secs = divmod(st.session_state.zeit_uebrig, 60)
+    zeit_format = f"{mins:02d}:{secs:02d}"
     display_placeholder.markdown(f"""
         <div class="timer-box">
             <div>
