@@ -66,7 +66,7 @@ texte = {
         "start": "AVVIA",
         "reset": "RESET",
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
-        "einst_titel": "⚙️ CONTROLLO SISTEMA",
+        "einst_titel": "⚙️ CONTROLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)"
     }
@@ -78,11 +78,10 @@ sound_links = {
     "Energy Horn": "https://google.com"
 }
 
-# 🌌 CSS für das futuristische Neon-Design
+# 🌌 CSS für den flexiblen Neon-Kreis mit automatischer Schriftfarbe (currentColor)
 st.markdown("""
     <style>
-    .main { background-color: #0d1117; }
-    .stApp { color: #ffffff; font-family: 'Courier New', monospace; }
+    .stApp { font-family: 'Courier New', monospace; }
     .timer-box {
         display: flex;
         justify-content: center;
@@ -93,21 +92,19 @@ st.markdown("""
         border-radius: 50%;
         border: 8px solid #1f6feb;
         box-shadow: 0 0 20px #1f6feb, inset 0 0 20px #1f6feb;
-        background-color: #161b22;
+        background-color: rgba(31, 111, 235, 0.05);
     }
     .timer-text {
         font-size: 55px;
         font-weight: bold;
-        color: #ffffff;
         letter-spacing: 2px;
         text-align: center;
+        color: currentColor; /* 💡 Wechselt automatisch zwischen Schwarz und Weiß! */
     }
     .sub-text {
         font-size: 14px;
         color: #58a6ff;
-        # Start-Button direkt unter der Uhr
-if st.button(f"▶ {t['start']}", use_container_width=True):
-
+        text-align: center;
         letter-spacing: 3px;
         margin-top: -5px;
     }
@@ -133,7 +130,7 @@ st.markdown("---")
 display_placeholder = st.empty()
 
 # Start-Button direkt unter der Uhr
-if st.button(f"▶ {t['start']}", use_container_width=True):
+if st.button(t['start'], use_container_width=True):
     gesamt_sekunden = minuten_einstellung * 60
     
     # Der echte Live-Countdown
