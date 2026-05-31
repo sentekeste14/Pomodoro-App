@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🌍 Wörterbuch mit allen Übersetzungen und Sprachbefehlen für die PC-Stimme
+# 🌍 Wörterbuch mit allen Übersetzungen
 texte = {
     "Deutsch": {
         "titel": "NEO POMODORO",
@@ -18,6 +18,9 @@ texte = {
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
+        "einst_stimme": "🗣️ STIMME",
+        "maennlich": "Männlich",
+        "weiblich": "Weiblich",
         "stimme_code": "de-DE",
         "stimme_text": "Zeit vorbei! Mach eine wohlverdiente Pause."
     },
@@ -29,6 +32,9 @@ texte = {
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
+        "einst_stimme": "🗣️ VOICE GENDER",
+        "maennlich": "Male",
+        "weiblich": "Female",
         "stimme_code": "en-US",
         "stimme_text": "Time is up! Take a well deserved break."
     },
@@ -40,6 +46,9 @@ texte = {
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
+        "einst_stimme": "🗣️ VOZ",
+        "maennlich": "Masculino",
+        "weiblich": "Femenino",
         "stimme_code": "es-ES",
         "stimme_text": "Tiempo agotado. Tomate un merecido descanso."
     },
@@ -51,6 +60,9 @@ texte = {
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
+        "einst_stimme": "🗣️ STEM",
+        "maennlich": "Mannelijk",
+        "weiblich": "Vrouwelijk",
         "stimme_code": "nl-NL",
         "stimme_text": "Tijd is om. Neem een welverdiende pauze."
     },
@@ -62,6 +74,9 @@ texte = {
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
+        "einst_stimme": "🗣️ VOIX",
+        "maennlich": "Masculin",
+        "weiblich": "Féminin",
         "stimme_code": "fr-FR",
         "stimme_text": "Le temps est ecoule. Prenez une pause bien meritee."
     },
@@ -73,6 +88,9 @@ texte = {
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
+        "einst_stimme": "🗣️ VOCE",
+        "maennlich": "Maschile",
+        "weiblich": "Femminile",
         "stimme_code": "it-IT",
         "stimme_text": "Tempo scaduto. Fai una meritata pausa."
     }
@@ -121,6 +139,10 @@ st.sidebar.subheader(t["einst_titel"])
 
 # Zeitschieber
 minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25, key="pomodoro_slider")
+
+# NEW: Auswahl des Geschlechts der Stimme in der Seitenleiste
+geschlecht_auswahl = st.sidebar.selectbox(t["einst_stimme"], [t["weiblich"], t["maennlich"]])
+js_geschlecht = "female" if geschlecht_auswahl == t["weiblich"] else "male"
 
 # 📱 HAUPTBILDSCHIRM
 st.title(t["titel"])
@@ -192,14 +214,53 @@ if st.session_state.status == "pausiert":
 elif st.session_state.status == "bereit" and not audio_trigger:
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{minuten_einstellung:02d}:00</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
 
-# 🗣️ INTERNE PC-STIMME AUSLÖSEN (Nutzt direkt die Soundkarte deines PCs über JavaScript!)
+# 🗣️ INTERNE PC-STIMME MIT GESCHLECHTS-SUCHE (JavaScript)
 if audio_trigger:
     st.components.v1.html(
         f"""
         <script>
             var msg = new SpeechSynthesisUtterance("{t['stimme_text']}");
             msg.lang = "{t['stimme_code']}";
-            window.speechSynthesis.speak(msg);
+            
+            // Funktion sucht nach passenden Stimmen auf dem jeweiligen Gerät
+            window.speechSynthesis.onvoiceschanged = function() {{
+                var voices = window.speechSynthesis.getVoices();
+                var gewaehltesGeschlecht = "{js_geschlecht}";
+                
+                // Versuche eine Stimme zu finden, die zur Sprache und zum Geschlecht passt
+                for (var i = 0; i < voices.length; i++) {{
+                    if (voices[i].lang.startsWith("{t['stimme_code'].split('-')[0]}")) {{
+                        var nameLower = voices[i].name.toLowerCase();
+                        if (gewaehltesGeschlecht === "male" && (nameLower.includes("male") || nameLower.includes("david") || nameLower.includes("stefan"))) {{
+                            msg.voice = voices[i];
+                            break;
+                        }} else if (gewaehltesGeschlecht === "female" && (nameLower.includes("female") || nameLower.includes("hazel") || nameLower.includes("hedda") || nameLower.includes("katja"))) {{
+                            msg.voice = voices[i];
+                            break;
+                        }}
+                    }
+                }}
+                window.speechSynthesis.speak(msg);
+            }};
+            
+            // Falls die Stimmen bereits geladen sind (z.B. in Chrome)
+            var voices = window.speechSynthesis.getVoices();
+            if (voices.length > 0) {{
+                var gewaehltesGeschlecht = "{js_geschlecht}";
+                for (var i = 0; i < voices.length; i++) {{
+                    if (voices[i].lang.startsWith("{t['stimme_code'].split('-')[0]}")) {{
+                        var nameLower = voices[i].name.toLowerCase();
+                        if (gewaehltesGeschlecht === "male" && (nameLower.includes("male") || nameLower.includes("david") || nameLower.includes("stefan"))) {{
+                            msg.voice = voices[i];
+                            break;
+                        }} else if (gewaehltesGeschlecht === "female" && (nameLower.includes("female") || nameLower.includes("hazel") || nameLower.includes("hedda") || nameLower.includes("katja"))) {{
+                            msg.voice = voices[i];
+                            break;
+                        }}
+                    }
+                }}
+                window.speechSynthesis.speak(msg);
+            }}
         </script>
         """,
         height=0
