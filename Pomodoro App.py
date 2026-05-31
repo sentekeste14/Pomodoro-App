@@ -18,7 +18,8 @@ texte = {
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
-        "einst_zeit": "⏱️ DAUER (MINUTEN)"
+        "einst_zeit": "⏱️ DAUER (MINUTEN)",
+        "sound_bereit": "🔊 ALARM-SOUND BEREIT"
     },
     "English": {
         "titel": "NEO POMODORO",
@@ -28,7 +29,8 @@ texte = {
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
-        "einst_zeit": "⏱️ DURATION (MINUTES)"
+        "einst_zeit": "⏱️ DURATION (MINUTES)",
+        "sound_bereit": "🔊 ALARM SOUND READY"
     },
     "Español": {
         "titel": "NEO POMODORO",
@@ -38,7 +40,8 @@ texte = {
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
-        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)"
+        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
+        "sound_bereit": "🔊 SONIDO DE ALARMA LISTO"
     },
     "Nederlands": {
         "titel": "NEO POMODORO",
@@ -48,7 +51,8 @@ texte = {
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
-        "einst_zeit": "⏱️ DUUR (MINUTEN)"
+        "einst_zeit": "⏱️ DUUR (MINUTEN)",
+        "sound_bereit": "🔊 ALARMSIGNAAL GEREED"
     },
     "Français": {
         "titel": "NEO POMODORO",
@@ -58,7 +62,8 @@ texte = {
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
-        "einst_zeit": "⏱️ DURÉE (MINUTES)"
+        "einst_zeit": "⏱️ DURÉE (MINUTES)",
+        "sound_bereit": "🔊 SONNERIE PRÊTE"
     },
     "Italiano": {
         "titel": "NEO POMODORO",
@@ -68,11 +73,12 @@ texte = {
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
-        "einst_zeit": "⏱️ DURATA (MINUTI)"
+        "einst_zeit": "⏱️ DURATA (MINUTI)",
+        "sound_bereit": "🔊 SUONO ALLARME PRONTO"
     }
 }
 
-# Stabile Sound-Links
+# Extrem stabile MP3-Links von einem schnellen Server
 sound_links = {
     "Classic Alarm": "https://soundhelix.com",
     "Digital Beep": "https://soundhelix.com",
@@ -127,38 +133,34 @@ sound_url = sound_links[ausgewaehlter_sound]
 st.title(t["titel"])
 st.markdown("---")
 
-# 🧠 TIMER LOGIK (Session State Variablen anlegen)
+# 🧠 TIMER LOGIK
 if "zeit_uebrig" not in st.session_state:
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 if "status" not in st.session_state:
-    st.session_state.status = "bereit"  # Mögliche Zustände: bereit, laeuft, pausiert
+    st.session_state.status = "bereit"
 
-# Falls der Schieberegler geändert wird, während die Uhr bereit steht, Zeit anpassen
 if st.session_state.status == "bereit":
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 
 display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
-# 🎛️ BUTTONS ERSTELLEN (Zentriert nebeneinander)
-col1, col2, col3 = st.columns([1, 1, 1])
+# 🎛️ BUTTONS (Zentriert)
+col1, col2, col3 = st.columns()
 
 with col1:
-    # Start oder Weiter-Button
     if st.session_state.status in ["bereit", "pausiert"]:
         if st.button(t['start'], use_container_width=True):
             st.session_state.status = "laeuft"
             st.rerun()
 
 with col2:
-    # Pause-Button
     if st.session_state.status == "laeuft":
         if st.button(t['pause'], use_container_width=True):
             st.session_state.status = "pausiert"
             st.rerun()
 
 with col3:
-    # Reset-Button (Immer sichtbar außer im Ruhezustand)
     if st.session_state.status != "bereit":
         if st.button(t['reset'], use_container_width=True):
             st.session_state.status = "bereit"
@@ -182,48 +184,22 @@ if st.session_state.status == "laeuft":
             
         time.sleep(1)
         st.session_state.zeit_uebrig -= 1
-        
-        # Ein kurzer Check, ob der Benutzer in der Zwischenzeit auf Pause geklickt hat
-        # (Streamlit bricht die Schleife bei Button-Klicks automatisch ab und startet das Skript neu)
 
-    # Wenn die Zeit wirklich komplett abgelaufen ist
     if st.session_state.zeit_uebrig == 0:
         st.session_state.status = "bereit"
         st.session_state.zeit_uebrig = minuten_einstellung * 60
-        display_placeholder.markdown(f"""
-            <div class="timer-box">
-                <div>
-                    <div class="timer-text">00:00</div>
-                    <div class="sub-text">DONE</div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
         st.balloons()
         st.success(t["erfolg"])
-        audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
+        
+        # 🔥 SAMSUNG FIX: Der offizielle Player wird direkt eingeblendet und gestartet
+        with audio_placeholder.container():
+            st.write(t["sound_bereit"])
+            st.audio(sound_url, format="audio/mp3", autoplay=True)
 
-# Anzeige wenn PAUSIERT
-elif st.session_state.status == "pausiert":
+# ZUSTANDS-ANZEIGEN
+if st.session_state.status == "pausiert":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
-    zeit_format = f"{mins:02d}:{secs:02d}"
-    display_placeholder.markdown(f"""
-        <div class="timer-box">
-            <div>
-                <div class="timer-text">{zeit_format}</div>
-                <div class="sub-text">PAUSED</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# Anzeige wenn BEREIT
-else:
+    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">PAUSED</div></div></div>""", unsafe_allow_html=True)
+elif st.session_state.status == "bereit":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
-    zeit_format = f"{mins:02d}:{secs:02d}"
-    display_placeholder.markdown(f"""
-        <div class="timer-box">
-            <div>
-                <div class="timer-text">{zeit_format}</div>
-                <div class="sub-text">READY</div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
