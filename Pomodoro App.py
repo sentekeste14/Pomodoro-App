@@ -140,7 +140,7 @@ st.sidebar.subheader(t["einst_titel"])
 # Zeitschieber
 minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25, key="pomodoro_slider")
 
-# NEW: Auswahl des Geschlechts der Stimme in der Seitenleiste
+# Auswahl des Geschlechts der Stimme
 geschlecht_auswahl = st.sidebar.selectbox(t["einst_stimme"], [t["weiblich"], t["maennlich"]])
 js_geschlecht = "female" if geschlecht_auswahl == t["weiblich"] else "male"
 
@@ -214,54 +214,46 @@ if st.session_state.status == "pausiert":
 elif st.session_state.status == "bereit" and not audio_trigger:
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{minuten_einstellung:02d}:00</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
 
-# 🗣️ INTERNE PC-STIMME MIT GESCHLECHTS-SUCHE (JavaScript)
+# 🗣️ REPARIERTE JAVASCRIPT-SPRACHAUSGABE (Ohne f-string Konflikt)
 if audio_trigger:
-    st.components.v1.html(
-        f"""
-        <script>
-            var msg = new SpeechSynthesisUtterance("{t['stimme_text']}");
-            msg.lang = "{t['stimme_code']}";
-            
-            // Funktion sucht nach passenden Stimmen auf dem jeweiligen Gerät
-            window.speechSynthesis.onvoiceschanged = function() {{
-                var voices = window.speechSynthesis.getVoices();
-                var gewaehltesGeschlecht = "{js_geschlecht}";
-                
-                // Versuche eine Stimme zu finden, die zur Sprache und zum Geschlecht passt
-                for (var i = 0; i < voices.length; i++) {{
-                    if (voices[i].lang.startsWith("{t['stimme_code'].split('-')[0]}")) {{
-                        var nameLower = voices[i].name.toLowerCase();
-                        if (gewaehltesGeschlecht === "male" && (nameLower.includes("male") || nameLower.includes("david") || nameLower.includes("stefan"))) {{
-                            msg.voice = voices[i];
-                            break;
-                        }} else if (gewaehltesGeschlecht === "female" && (nameLower.includes("female") || nameLower.includes("hazel") || nameLower.includes("hedda") || nameLower.includes("katja"))) {{
-                            msg.voice = voices[i];
-                            break;
-                        }}
-                    }
-                }}
-                window.speechSynthesis.speak(msg);
-            }};
-            
-            // Falls die Stimmen bereits geladen sind (z.B. in Chrome)
+    javascript_code = """
+    <script>
+        var msg = new SpeechSynthesisUtterance("STIMME_TEXT_PLACEHOLDER");
+        msg.lang = "STIMME_CODE_PLACEHOLDER";
+        
+        function setVoiceAndSpeak() {
             var voices = window.speechSynthesis.getVoices();
-            if (voices.length > 0) {{
-                var gewaehltesGeschlecht = "{js_geschlecht}";
-                for (var i = 0; i < voices.length; i++) {{
-                    if (voices[i].lang.startsWith("{t['stimme_code'].split('-')[0]}")) {{
-                        var nameLower = voices[i].name.toLowerCase();
-                        if (gewaehltesGeschlecht === "male" && (nameLower.includes("male") || nameLower.includes("david") || nameLower.includes("stefan"))) {{
-                            msg.voice = voices[i];
-                            break;
-                        }} else if (gewaehltesGeschlecht === "female" && (nameLower.includes("female") || nameLower.includes("hazel") || nameLower.includes("hedda") || nameLower.includes("katja"))) {{
-                            msg.voice = voices[i];
-                            break;
-                        }}
+            var gewaehltesGeschlecht = "JS_GESCHLECHT_PLACEHOLDER";
+            var sprachCode = "STIMME_CODE_PLACEHOLDER";
+            
+            for (var i = 0; i < voices.length; i++) {
+                if (voices[i].lang.startsWith(sprachCode.split('-')[0])) {
+                    var nameLower = voices[i].name.toLowerCase();
+                    if (gewaehltesGeschlecht === "male" && (nameLower.includes("male") || nameLower.includes("david") || nameLower.includes("stefan") || nameLower.includes("christoph"))) {
+                        msg.voice = voices[i];
+                        break;
+                    } else if (gewaehltesGeschlecht === "female" && (nameLower.includes("female") || nameLower.includes("hazel") || nameLower.includes("hedda") || nameLower.includes("katja") || nameLower.includes("amalie"))) {
+                        msg.voice = voices[i];
+                        break;
                     }
-                }}
-                window.speechSynthesis.speak(msg);
-            }}
-        </script>
-        """,
-        height=0
-    )
+                }
+            }
+            window.speechSynthesis.speak(msg);
+        }
+
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
+        }
+        
+        var voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            setVoiceAndSpeak();
+        }
+    </script>
+    """
+    # Hier werden die Python-Variablen sicher ohne f-string Fehler in den Text eingesetzt:
+    javascript_code = javascript_code.replace("STIMME_TEXT_PLACEHOLDER", t['stimme_text'])
+    javascript_code = javascript_code.replace("STIMME_CODE_PLACEHOLDER", t['stimme_code'])
+    javascript_code = javascript_code.replace("JS_GESCHLECHT_PLACEHOLDER", js_geschlecht)
+    
+    st.components.v1.html(javascript_code, height=0)
