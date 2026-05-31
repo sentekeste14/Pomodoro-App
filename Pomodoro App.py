@@ -18,7 +18,8 @@ texte = {
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
-        "einst_zeit": "⏱️ DAWER (MINUTEN)"
+        "einst_zeit": "⏱️ DAUER (MINUTEN)",
+        "sound_bereit": "🔊 Audio bereit! Drücke Play falls es nicht automatisch startet:"
     },
     "English": {
         "titel": "⚡ NEO POMODORO",
@@ -28,7 +29,8 @@ texte = {
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
-        "einst_zeit": "⏱️ DURATION (MINUTES)"
+        "einst_zeit": "⏱️ DURATION (MINUTES)",
+        "sound_bereit": "🔊 Audio ready! Press play if it doesn't auto-start:"
     },
     "Español": {
         "titel": "⚡ NEO POMODORO",
@@ -38,7 +40,8 @@ texte = {
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
-        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)"
+        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
+        "sound_bereit": "🔊 ¡Audio listo! Presiona reproducir si no inicia solo:"
     },
     "Nederlands": {
         "titel": "⚡ NEO POMODORO",
@@ -48,7 +51,8 @@ texte = {
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
-        "einst_zeit": "⏱️ DUUR (MINUTEN)"
+        "einst_zeit": "⏱️ DUUR (MINUTEN)",
+        "sound_bereit": "🔊 Audio gereed! Druk op play als het niet automatisch start:"
     },
     "Français": {
         "titel": "⚡ NEO POMODORO",
@@ -58,7 +62,8 @@ texte = {
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
-        "einst_zeit": "⏱️ DURÉE (MINUTES)"
+        "einst_zeit": "⏱️ DURÉE (MINUTES)",
+        "sound_bereit": "🔊 Audio prêt ! Appuyez sur play si cela ne démarre pas seul :"
     },
     "Italiano": {
         "titel": "⚡ NEO POMODORO",
@@ -66,19 +71,21 @@ texte = {
         "start": "AVVIA",
         "reset": "RESET",
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
-        "einst_titel": "⚙️ CONTROLO SISTEMA",
+        "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
-        "einst_zeit": "⏱️ DURATA (MINUTI)"
+        "einst_zeit": "⏱️ DURATA (MINUTI)",
+        "sound_bereit": "🔊 Audio pronto! Premi play se non parte da solo:"
     }
 }
 
+# Zuverlässige MP3/OGG Sound-Links aus dem Internet
 sound_links = {
+    "Classic Alarm": "https://soundhelix.com", # Beispiel stabiler MP3-Stream
     "Digital Watch": "https://google.com",
-    "Cyber Bell": "https://google.com",
-    "Energy Horn": "https://google.com"
+    "Cyber Bell": "https://google.com"
 }
 
-# 🌌 CSS für den flexiblen Neon-Kreis mit automatischer Schriftfarbe (currentColor)
+# 🌌 CSS für den flexiblen Neon-Kreis mit automatischer Schriftfarbe
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -99,7 +106,7 @@ st.markdown("""
         font-weight: bold;
         letter-spacing: 2px;
         text-align: center;
-        color: currentColor; /* 💡 Wechselt automatisch zwischen Schwarz und Weiß! */
+        color: currentColor;
     }
     .sub-text {
         font-size: 14px;
@@ -152,8 +159,9 @@ if st.button(t['start'], use_container_width=True):
     st.balloons()
     st.success(t["erfolg"])
     
-    # Sound abspielen
-    st.markdown(f'<iframe src="{sound_url}" allow="autoplay" style="display:none;"></iframe>', unsafe_allow_html=True)
+    # 🔊 OFFIZIELLER STREAMLIT AUDIO PLAYER (Sicherer Browser-Weg)
+    st.write(t["sound_bereit"])
+    st.audio(sound_url, format="audio/mp3", autoplay=True)
 
 else:
     # Standard-Anzeige im Ruhezustand
