@@ -146,7 +146,7 @@ display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
 # 🎛️ BUTTONS (Zentriert)
-col1, col2, col3 = st.columns()
+col1, col2, col3 = st.columns(3)
 
 with col1:
     if st.session_state.status in ["bereit", "pausiert"]:
