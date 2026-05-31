@@ -1,91 +1,79 @@
 import streamlit as st
 import time
 
-# 🎨 Futuristisches Seiten-Setup
+# 🎨 Minimalistisches Seiten-Setup
 st.set_page_config(
     page_title="NEO Pomodoro",
-    page_icon="⚡",
+    page_icon="⏱️",
     layout="centered"
 )
 
-# 🌍 Wörterbuch mit allen Übersetzungen
+# 🌍 Wörterbuch mit allen Übersetzungen (ohne Emojis/Untertitel)
 texte = {
     "Deutsch": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "FUTURISTISCHES FOKUS-SYSTEM",
+        "titel": "NEO POMODORO",
         "start": "START",
         "reset": "RESET",
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
-        "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "sound_hinweis": "🎵 Tonsignal wird geladen..."
+        "einst_zeit": "⏱️ DAUER (MINUTEN)"
     },
     "English": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "FUTURISTIC FOCUS SYSTEM",
+        "titel": "NEO POMODORO",
         "start": "START",
         "reset": "RESET",
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
-        "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "sound_hinweis": "🎵 Loading audio signal..."
+        "einst_zeit": "⏱️ DURATION (MINUTES)"
     },
     "Español": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "SISTEMA DE ENFOQUE FUTURISTA",
+        "titel": "NEO POMODORO",
         "start": "INICIAR",
         "reset": "REINICIAR",
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
-        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "sound_hinweis": "🎵 Cargando señal de audio..."
+        "einst_zeit": "⏱️ DURACIÓN (MINUTOS)"
     },
     "Nederlands": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "FUTURISTISCH FOCUS SYSTEEM",
+        "titel": "NEO POMODORO",
         "start": "START",
         "reset": "RESET",
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
-        "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "sound_hinweis": "🎵 Audiosignaal laden..."
+        "einst_zeit": "⏱️ DUUR (MINUTEN)"
     },
     "Français": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "SYSTÈME DE CONCENTRATION FUTURISTE",
+        "titel": "NEO POMODORO",
         "start": "DÉMARRER",
         "reset": "RÉINITIALISER",
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
-        "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "sound_hinweis": "🎵 Chargement du signal audio..."
+        "einst_zeit": "⏱️ DURÉE (MINUTES)"
     },
     "Italiano": {
-        "titel": "⚡ NEO POMODORO",
-        "untertitel": "SISTEMA DI CONCENTRAZIONE FUTURISTICO",
+        "titel": "NEO POMODORO",
         "start": "AVVIA",
         "reset": "RESET",
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
-        "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "sound_hinweis": "🎵 Caricamento segnale audio..."
+        "einst_zeit": "⏱️ DURATA (MINUTI)"
     }
 }
 
-# Absolut stabile, direkt streambare Musik-Links (MP3-Format)
+# Stabile Sound-Links
 sound_links = {
     "Classic Alarm": "https://soundhelix.com",
     "Digital Beep": "https://soundhelix.com",
     "Cyber Chime": "https://soundhelix.com"
 }
 
-# 🌌 CSS für den flexiblen Neon-Kreis mit automatischer Schriftfarbe
+# 🌌 CSS für den kreisförmigen Timer (Farben passen sich an)
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -129,21 +117,18 @@ minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=
 ausgewaehlter_sound = st.sidebar.selectbox(t["einst_sound"], list(sound_links.keys()))
 sound_url = sound_links[ausgewaehlter_sound]
 
-# 📱 HAUPTBILDSCHIRM
+# 📱 HAUPTBILDSCHIRM (Jetzt ohne Untertitel und ohne Blitz-Emoji)
 st.title(t["titel"])
-st.caption(t["untertitel"])
 st.markdown("---")
 
 display_placeholder = st.empty()
-
-# Container für den Audio-Player vorbereiten (Wird erst geladen, wenn die Zeit um ist!)
 audio_placeholder = st.empty()
 
 # Start-Button direkt unter der Uhr
 if st.button(t['start'], use_container_width=True):
     gesamt_sekunden = minuten_einstellung * 60
     
-    # Der echte Live-Countdown
+    # Der Live-Countdown
     for verbleibend in range(gesamt_sekunden, -1, -1):
         mins, secs = divmod(verbleibend, 60)
         zeit_format = f"{mins:02d}:{secs:02d}"
@@ -162,8 +147,7 @@ if st.button(t['start'], use_container_width=True):
     st.balloons()
     st.success(t["erfolg"])
     
-    # 🔥 DIE BRUTALE ABSICHERUNG: Der offizielle Streamlit-Audio-Player mit echtem MPEG-MIME-Typ
-    # Das wird von JEDEM mobilen und Desktop-Browser akzeptiert, weil der Nutzer zuvor auf "START" geklickt hat!
+    # Sound abspielen
     audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
 
 else:
