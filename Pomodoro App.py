@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 
-# 🎨 Perfektes Seiten-Setup für alle Geräte
+# 🎨 Perfektes Seiten-Setup
 st.set_page_config(
     page_title="NEO Pomodoro",
     page_icon="⏱️",
@@ -19,7 +19,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
         "einst_sound": "🔔 AUDIO-SIGNAL",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "sound_knopf": "🎵 ALARM ABSPIELEN / STOPPEN"
+        "player_titel": "🔊 Alarmsignal aktivieren:"
     },
     "English": {
         "titel": "NEO POMODORO",
@@ -30,7 +30,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEM CONTROL",
         "einst_sound": "🔔 AUDIO SIGNAL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "sound_knopf": "🎵 PLAY / STOP ALARM"
+        "player_titel": "🔊 Activate alarm signal:"
     },
     "Español": {
         "titel": "NEO POMODORO",
@@ -41,7 +41,7 @@ texte = {
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
         "einst_sound": "🔔 SEÑAL DE AUDIO",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "sound_knopf": "🎵 REPRODUCIR / DETENER ALARMA"
+        "player_titel": "🔊 Activar señal de alarma:"
     },
     "Nederlands": {
         "titel": "NEO POMODORO",
@@ -52,7 +52,7 @@ texte = {
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
         "einst_sound": "🔔 AUDIOSIGNAAL",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "sound_knopf": "🎵 ALARM AFSPELEN / STOPPEN"
+        "player_titel": "🔊 Alarmsignaal activeren:"
     },
     "Français": {
         "titel": "NEO POMODORO",
@@ -63,7 +63,7 @@ texte = {
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
         "einst_sound": "🔔 SIGNAL AUDIO",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "sound_knopf": "🎵 JOUER / ARRÊTER L'ALARME"
+        "player_titel": "🔊 Activer le signal d'alarme:"
     },
     "Italiano": {
         "titel": "NEO POMODORO",
@@ -74,18 +74,18 @@ texte = {
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
         "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "sound_knopf": "🎵 RIPRODUCI / FERMA ALLARME"
+        "player_titel": "🔊 Attiva segnale acustico:"
     }
 }
 
-# 🔊 Zuverlässige, kurze Sound-Effekte im MP3-Format
+# 🔊 Neue, extrem stabile Sound-Direktlinks (Direkte MP3-Streams ohne Blockaden)
 sound_links = {
-    "Classic Alarm": "https://mixkit.co",
-    "Digital Beep": "https://mixkit.co",
-    "Cyber Chime": "https://mixkit.co"
+    "Classic Alarm": "https://soundhelix.com",
+    "Digital Beep": "https://soundhelix.com",
+    "Cyber Chime": "https://soundhelix.com"
 }
 
-# 🌌 CSS: Automatische Größenanpassung für Handy & PC (Responsive)
+# 🌌 CSS: Automatische Größenanpassung
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -94,7 +94,6 @@ st.markdown("""
         justify-content: center;
         align-items: center;
         margin: 30px auto;
-        /* Automatische Anpassung: Maximal 280px, auf kleinen Handys 65% der Bildschirmbreite */
         width: min(280px, 65vw);
         height: min(280px, 65vw);
         border-radius: 50%;
@@ -103,7 +102,6 @@ st.markdown("""
         background-color: rgba(31, 111, 235, 0.05);
     }
     .timer-text {
-        /* Schriftgröße passt sich der Kreisgröße an */
         font-size: min(50px, 11vw);
         font-weight: bold;
         letter-spacing: 2px;
@@ -147,7 +145,7 @@ if st.session_state.status == "bereit":
 display_placeholder = st.empty()
 audio_placeholder = st.empty()
 
-# 🎛️ BUTTONS (Zentriert und für Touchscreens optimiert)
+# 🎛️ BUTTONS (Zentriert)
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -191,17 +189,25 @@ if st.session_state.status == "laeuft":
         st.session_state.status = "bereit"
         st.session_state.zeit_uebrig = minuten_einstellung * 60
         
-        # Zeige das Endergebnis, feiere mit Luftballons
         display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">00:00</div><div class="sub-text">DONE</div></div></div>""", unsafe_allow_html=True)
         st.balloons()
         st.success(t["erfolg"])
         
-        # 🔊 DIE SYSTEM-ÜBERGREIFENDE LÖSUNG:
-        # Ein nativer, sichtbarer Player wird geladen. Am PC startet autoplay, 
-        # auf dem Handy dient der Knopf als sicherer Auslöser!
-        audio_placeholder.audio(sound_url, format="audio/mpeg", autoplay=True)
+        # 🔥 DIE NATIVE WEB-RETTUNG: Ein echter HTML5 Audio Player mit Steuerungsknöpfen!
+        # Durch die "controls" sieht der Browser ein legitimes Media-Element und blockiert es nicht.
+        audio_placeholder.markdown(
+            f"""
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="font-weight: bold;">{t['player_titel']}</p>
+                <audio controls autoplay style="width: 100%; max-width: 400px;">
+                    <source src="{sound_url}" type="audio/mp3">
+                </audio>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-# ZUSTANDS-ANZEIGEN (Wenn nicht aktiv heruntergezählt wird)
+# ZUSTANDS-ANZEIGEN
 if st.session_state.status == "pausiert":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">PAUSED</div></div></div>""", unsafe_allow_html=True)
