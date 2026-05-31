@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# 🌍 Wörterbuch mit allen Übersetzungen
+# 🌍 Wörterbuch mit allen Übersetzungen und Sprachbefehlen für die PC-Stimme
 texte = {
     "Deutsch": {
         "titel": "NEO POMODORO",
@@ -17,9 +17,9 @@ texte = {
         "reset": "RESET",
         "erfolg": "🚀 FOKUS-PHASE BEENDET!",
         "einst_titel": "⚙️ SYSTEM-STEUERUNG",
-        "einst_sound": "🔔 AUDIO-SIGNAL",
         "einst_zeit": "⏱️ DAUER (MINUTEN)",
-        "player_titel": "🔊 KLICKE RECHTS AUF DAS DREIECK FÜR DEN TON:"
+        "stimme_code": "de-DE",
+        "stimme_text": "Zeit vorbei! Mach eine wohlverdiente Pause."
     },
     "English": {
         "titel": "NEO POMODORO",
@@ -28,9 +28,9 @@ texte = {
         "reset": "RESET",
         "erfolg": "🚀 FOCUS PHASE COMPLETE!",
         "einst_titel": "⚙️ SYSTEM CONTROL",
-        "einst_sound": "🔔 AUDIO SIGNAL",
         "einst_zeit": "⏱️ DURATION (MINUTES)",
-        "player_titel": "🔊 CLICK THE PLAY TRIANGLE FOR AUDIO:"
+        "stimme_code": "en-US",
+        "stimme_text": "Time is up! Take a well deserved break."
     },
     "Español": {
         "titel": "NEO POMODORO",
@@ -39,9 +39,9 @@ texte = {
         "reset": "REINICIAR",
         "erfolg": "🚀 ¡FASE DE ENFOQUE COMPLETADA!",
         "einst_titel": "⚙️ CONTROL DEL SISTEMA",
-        "einst_sound": "🔔 SEÑAL DE AUDIO",
         "einst_zeit": "⏱️ DURACIÓN (MINUTOS)",
-        "player_titel": "🔊 HAZ CLIC EN EL TRIÁNGULO PARA EL SONIDO:"
+        "stimme_code": "es-ES",
+        "stimme_text": "Tiempo agotado. Tomate un merecido descanso."
     },
     "Nederlands": {
         "titel": "NEO POMODORO",
@@ -50,9 +50,9 @@ texte = {
         "reset": "RESET",
         "erfolg": "🚀 FOCUSFASE VOLTOOID!",
         "einst_titel": "⚙️ SYSTEEMCONTROLE",
-        "einst_sound": "🔔 AUDIOSIGNAAL",
         "einst_zeit": "⏱️ DUUR (MINUTEN)",
-        "player_titel": "🔊 KLIK OP DE DRIEHOEK VOOR GELUID:"
+        "stimme_code": "nl-NL",
+        "stimme_text": "Tijd is om. Neem een welverdiende pauze."
     },
     "Français": {
         "titel": "NEO POMODORO",
@@ -61,9 +61,9 @@ texte = {
         "reset": "RÉINITIALISER",
         "erfolg": "🚀 PHASE DE CONCENTRATION TERMINÉE !",
         "einst_titel": "⚙️ CONTRÔLE DU SYSTÈME",
-        "einst_sound": "🔔 SIGNAL AUDIO",
         "einst_zeit": "⏱️ DURÉE (MINUTES)",
-        "player_titel": "🔊 CLIQUEZ SUR LE TRIANGLE POUR LE SON:"
+        "stimme_code": "fr-FR",
+        "stimme_text": "Le temps est ecoule. Prenez une pause bien meritee."
     },
     "Italiano": {
         "titel": "NEO POMODORO",
@@ -72,20 +72,13 @@ texte = {
         "reset": "RESET",
         "erfolg": "🚀 FASE DI CONCENTRAZIONE COMPLETATA!",
         "einst_titel": "⚙️ CONTROLLO SISTEMA",
-        "einst_sound": "🔔 SEGNALE AUDIO",
         "einst_zeit": "⏱️ DURATA (MINUTI)",
-        "player_titel": "🔊 CLICCA SUL TRIANGOLO PER IL SUONO:"
+        "stimme_code": "it-IT",
+        "stimme_text": "Tempo scaduto. Fai una meritata pausa."
     }
 }
 
-# Extrem stabile und zuverlässige Songs, die jeder Browser sofort abspielen kann
-sound_links = {
-    "Song 1": "https://soundhelix.com",
-    "Song 2": "https://soundhelix.com",
-    "Song 3": "https://soundhelix.com"
-}
-
-# 🌌 CSS: Macht den Kreis chic und bringt den Player ganz nach vorne!
+# 🌌 CSS: Layout-Optimierung
 st.markdown("""
     <style>
     .stApp { font-family: 'Courier New', monospace; }
@@ -115,22 +108,6 @@ st.markdown("""
         letter-spacing: 3px;
         margin-top: -5px;
     }
-    /* 🔥 Klick-Rettung: Zwingt den HTML-Player in den absoluten Vordergrund */
-    .audio-container {
-        position: relative;
-        z-index: 99999 !important;
-        margin: 30px auto;
-        padding: 15px;
-        background: rgba(31, 111, 235, 0.1);
-        border-radius: 10px;
-        border: 1px solid #1f6feb;
-        text-align: center;
-    }
-    audio {
-        width: 100%;
-        max-width: 350px;
-        height: 54px;
-    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -142,27 +119,24 @@ t = texte[sprache]
 st.sidebar.markdown("---")
 st.sidebar.subheader(t["einst_titel"])
 
-# 🧠 WICHTIG: Eindeutige "key"-Zuweisung, damit sich der Slider nicht aufhängt!
+# Zeitschieber
 minuten_einstellung = st.sidebar.slider(t["einst_zeit"], min_value=1, max_value=60, value=25, key="pomodoro_slider")
-ausgewaehlter_sound = st.sidebar.selectbox(t["einst_sound"], list(sound_links.keys()))
-sound_url = sound_links[ausgewaehlter_sound]
 
 # 📱 HAUPTBILDSCHIRM
 st.title(t["titel"])
 st.markdown("---")
 
-# Session State Variablen initialisieren
+# Session State initialisieren
 if "zeit_uebrig" not in st.session_state:
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 if "status" not in st.session_state:
     st.session_state.status = "bereit"
 
-# Wenn die Uhr bereitsteht, folgt sie dem Slider sofort
 if st.session_state.status == "bereit":
     st.session_state.zeit_uebrig = minuten_einstellung * 60
 
 display_placeholder = st.empty()
-audio_placeholder = st.empty()
+audio_trigger = False
 
 # 🎛️ BUTTONS
 col1, col2, col3 = st.columns(3)
@@ -186,7 +160,7 @@ with col3:
             st.session_state.zeit_uebrig = minuten_einstellung * 60
             st.rerun()
 
-# ⏱️ COUNTDOWN-SCHLEIFE
+# ⏱️ COUNTDOWN-LOOP
 if st.session_state.status == "laeuft":
     while st.session_state.zeit_uebrig > 0 and st.session_state.status == "laeuft":
         mins, secs = divmod(st.session_state.zeit_uebrig, 60)
@@ -207,30 +181,26 @@ if st.session_state.status == "laeuft":
     if st.session_state.zeit_uebrig == 0:
         st.session_state.status = "bereit"
         st.session_state.zeit_uebrig = minuten_einstellung * 60
-        
-        display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">00:00</div><div class="sub-text">DONE</div></div></div>""", unsafe_allow_html=True)
+        audio_trigger = True
         st.balloons()
         st.success(t["erfolg"])
-        
-        # 🔥 DIE ABSOLUTE RETTUNG: Verpackt in einer klickbaren CSS-Box im absoluten Vordergrund!
-        audio_placeholder.markdown(
-            f"""
-            <div class="audio-container">
-                <p style="font-weight: bold; margin-bottom: 10px; color: #58a6ff;">{t['player_titel']}</p>
-                <audio controls autoplay>
-                    <source src="{sound_url}" type="audio/mp3">
-                </audio>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
-# ANZEIGE WENN PAUSIERT
+# ANZEIGE PAUSIERT / BEREIT
 if st.session_state.status == "pausiert":
     mins, secs = divmod(st.session_state.zeit_uebrig, 60)
     display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">PAUSED</div></div></div>""", unsafe_allow_html=True)
+elif st.session_state.status == "bereit" and not audio_trigger:
+    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{minuten_einstellung:02d}:00</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
 
-# ANZEIGE WENN BEREIT
-elif st.session_state.status == "bereit":
-    mins, secs = divmod(st.session_state.zeit_uebrig, 60)
-    display_placeholder.markdown(f"""<div class="timer-box"><div><div class="timer-text">{mins:02d}:{secs:02d}</div><div class="sub-text">READY</div></div></div>""", unsafe_allow_html=True)
+# 🗣️ INTERNE PC-STIMME AUSLÖSEN (Nutzt direkt die Soundkarte deines PCs über JavaScript!)
+if audio_trigger:
+    st.components.v1.html(
+        f"""
+        <script>
+            var msg = new SpeechSynthesisUtterance("{t['stimme_text']}");
+            msg.lang = "{t['stimme_code']}";
+            window.speechSynthesis.speak(msg);
+        </script>
+        """,
+        height=0
+    )
