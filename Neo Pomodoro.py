@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+st.markdown('<meta name="google-site-verification" content="DEIN_CODE_VON_GOOGLE" />', unsafe_allow_html=True)
 
 # 🎨 Seiten-Setup
 st.set_page_config(
